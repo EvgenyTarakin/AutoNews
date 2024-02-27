@@ -91,7 +91,10 @@ private extension NewsView {
 // MARK: - UICollectionViewDelegate
 
 extension NewsView: UICollectionViewDelegate {
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath) as? NewsCell
+        cell?.animateSelectCell()
+    }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -109,7 +112,6 @@ extension NewsView: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        print(indexPath.row)
         if indexPath.row == count - 1 {
             count += 10
             collectionView.reloadData()

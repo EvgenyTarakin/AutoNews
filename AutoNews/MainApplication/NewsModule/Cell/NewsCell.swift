@@ -15,6 +15,15 @@ final class NewsCell: UICollectionViewCell {
     
     // MARK: - private property
     
+    private lazy var backView: UIView = {
+        let backView = UIView()
+        backView.backgroundColor = .black.withAlphaComponent(0.1)
+        backView.layer.cornerRadius = 13
+        backView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return backView
+    }()
+    
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "house")
@@ -53,19 +62,32 @@ extension NewsCell {
     func configurate(title: String, imageUrl: URL) {
         titleLabel.text = title
     }
+    
+    func animateSelectCell() {
+        UIView.animate(withDuration: 0.15, animations: { [weak self] in
+            guard let self else { return }
+            backView.bounds.size.width += 24
+            backView.bounds.size.height += 24
+        })
+    }
 }
 
 // MARK: - private func
 
 private extension NewsCell {
     func commonInit() {
-        backgroundColor = .black.withAlphaComponent(0.1)
         layer.cornerRadius = 16
         
+        addSubview(backView)
         addSubview(imageView)
         addSubview(titleLabel)
         
         NSLayoutConstraint.activate([
+            backView.topAnchor.constraint(equalTo: topAnchor),
+            backView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            backView.leftAnchor.constraint(equalTo: leftAnchor),
+            backView.rightAnchor.constraint(equalTo: rightAnchor),
+            
             imageView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
             imageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
             imageView.leftAnchor.constraint(equalTo: leftAnchor, constant: 12),
