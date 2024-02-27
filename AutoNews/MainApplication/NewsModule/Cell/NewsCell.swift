@@ -64,10 +64,10 @@ extension NewsCell {
     }
     
     func animateSelectCell() {
-        UIView.animate(withDuration: 0.15, animations: { [weak self] in
+        UIView.animate(withDuration: 0.2, animations: { [weak self] in
             guard let self else { return }
-            backView.bounds.size.width += 24
-            backView.bounds.size.height += 24
+            backView.bounds.size.width -= 24
+            backView.bounds.size.height -= 24
         })
     }
 }
