@@ -15,6 +15,8 @@ final class NewsCell: UICollectionViewCell {
     
     // MARK: - private property
     
+    private var url: URL?
+    
     private lazy var backView: UIView = {
         let backView = UIView()
         backView.backgroundColor = .black.withAlphaComponent(0.1)
@@ -24,20 +26,38 @@ final class NewsCell: UICollectionViewCell {
         return backView
     }()
     
+    private lazy var backImageView: UIView = {
+        let backView = UIView()
+        backView.backgroundColor = .clear
+        backView.layer.cornerRadius = 13
+        backView.translatesAutoresizingMaskIntoConstraints = false
+        backView.clipsToBounds = true
+        
+        return backView
+    }()
+    
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "house")
-        imageView.layer.cornerRadius = 12
+        imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
+    }()
+    
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView()
+        activityIndicator.style = .medium
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        return activityIndicator
     }()
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
         label.font = UIFont.boldSystemFont(ofSize: 20)
-        label.numberOfLines = 0
+        label.numberOfLines = 2
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -54,20 +74,32 @@ final class NewsCell: UICollectionViewCell {
         super.init(coder: coder)
     }
     
+    // MARK: - override func
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        titleLabel.text = ""
+        imageView.image = nil
+    }
+    
 }
 
 // MARK: - func
 
 extension NewsCell {
-    func configurate(title: String, imageUrl: URL) {
+    func configurate(title: String) {
         titleLabel.text = title
+    }
+    
+    func setImage(_ urlImage: URL?) {
+        imageView.imageFromServerURL(urlImage)
     }
     
     func animateSelectCell() {
         UIView.animate(withDuration: 0.2, animations: { [weak self] in
             guard let self else { return }
-            backView.bounds.size.width -= 24
-            backView.bounds.size.height -= 24
+            backView.bounds.size.width += 12
+            backView.bounds.size.height += 12
         })
     }
 }
@@ -76,10 +108,10 @@ extension NewsCell {
 
 private extension NewsCell {
     func commonInit() {
-        layer.cornerRadius = 16
-        
         addSubview(backView)
-        addSubview(imageView)
+        addSubview(backImageView)
+        backImageView.addSubview(imageView)
+        addSubview(activityIndicator)
         addSubview(titleLabel)
         
         NSLayoutConstraint.activate([
@@ -88,14 +120,23 @@ private extension NewsCell {
             backView.leftAnchor.constraint(equalTo: leftAnchor),
             backView.rightAnchor.constraint(equalTo: rightAnchor),
             
-            imageView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
-            imageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
-            imageView.leftAnchor.constraint(equalTo: leftAnchor, constant: 12),
-            imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: 1),
+            backImageView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+            backImageView.leftAnchor.constraint(equalTo: leftAnchor, constant: 12),
+            backImageView.rightAnchor.constraint(equalTo: rightAnchor, constant: -12),
+            backImageView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.70),
             
-            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            imageView.topAnchor.constraint(equalTo: backImageView.topAnchor),
+            imageView.bottomAnchor.constraint(equalTo: backImageView.bottomAnchor),
+            imageView.leftAnchor.constraint(equalTo: backImageView.leftAnchor),
+            imageView.rightAnchor.constraint(equalTo: backImageView.rightAnchor),
+            
+            activityIndicator.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
+            
+            titleLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 12),
+            titleLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 12),
             titleLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -12),
-            titleLabel.leftAnchor.constraint(equalTo: imageView.rightAnchor, constant: 16)
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12)
         ])
     }
 }

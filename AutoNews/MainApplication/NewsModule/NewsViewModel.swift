@@ -6,17 +6,15 @@
 //
 
 import Foundation
+import UIKit
 
 // MARK: - NewsViewToViewModelProtocol
 
 protocol NewsViewToViewModelProtocol: AnyObject {
     func viewDidLoad()
-}
-
-// MARK: - protocol
-
-protocol NewsModelToViewModelProtocol: AnyObject {
-    func didFinishLoadNews()
+    func loadNextPageNews()
+    func getCountNews() -> Int
+    func getNew(index: Int) -> New?
 }
 
 final class NewsViewModel {
@@ -25,21 +23,55 @@ final class NewsViewModel {
     
     weak var view: NewsViewModelToViewProtocol?
     
-    var model: NewsViewModelToModelProtocol?
+    // MARK: - private property
     
+    private var networkManager = NetworkManager()
+    
+    private var page = 1
+            
+}
+
+// MARK: - private func
+
+private extension NewsViewModel {
+    func loadImageNews() {
+        
+    }
 }
 
 // MARK: - NewsViewToViewModelProtocol
 
 extension NewsViewModel: NewsViewToViewModelProtocol {
     func viewDidLoad() {
-        model?.getNews()
+        Task {
+            do {
+                networkManager.clearAllData()
+                page = 1
+                try await networkManager.getAutoNews(page: page)
+                view?.updateNewsWithData()
+            } catch {
+                
+            }
+        }
     }
-}
-
-// MARK: - NewsModelToViewModelProtocol
-extension NewsViewModel: NewsModelToViewModelProtocol {
-    func didFinishLoadNews() {
-        view?.updateNewsWithData()
+    
+    func loadNextPageNews() {
+        Task {
+            do {
+                page += 1
+                try await networkManager.getAutoNews(page: page)
+                view?.updateNewsWithData()
+            } catch {
+                
+            }
+        }
+    }
+    
+    func getCountNews() -> Int {
+        return networkManager.countNews
+    }
+    
+    func getNew(index: Int) -> New? {
+        return networkManager.getNew(index: index)
     }
 }

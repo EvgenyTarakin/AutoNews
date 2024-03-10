@@ -2,29 +2,23 @@
 //  NewsModel.swift
 //  AutoNews
 //
-//  Created by Евгений Таракин on 26.02.2024.
+//  Created by Евгений Таракин on 02.03.2024.
 //
 
-import Foundation
+import UIKit
 
-// MARK: - NewsViewModelToModelProtocol
-
-protocol NewsViewModelToModelProtocol {
-    func getNews()
+final class NewsModel: Codable {
+    let news: [New]?
+    let totalCount: Int?
 }
 
-final class NewsModel {
-    
-    // MARK: - property
-    
-    weak var viewModel: NewsModelToViewModelProtocol?
-    
-}
-
-// MARK: - NewsViewModelToModelProtocol
-
-extension NewsModel: NewsViewModelToModelProtocol {
-    func getNews() {
-        viewModel?.didFinishLoadNews()
-    }
+final class New: Codable {
+    let id: Int?
+    let title: String?
+    let description: String?
+    let publishedDate: String?
+    let url: String?
+    let fullUrl: URL?
+    let titleImageUrl: URL?
+    let categoryType: String?
 }

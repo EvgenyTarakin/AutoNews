@@ -19,12 +19,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             let newsView = NewsView()
             newsView.title = "Новости"
             let newsViewModel = NewsViewModel()
-            let newsModel = NewsModel()
             
             newsView.viewModel = newsViewModel
             newsViewModel.view = newsView
-            newsViewModel.model = newsModel
-            newsModel.viewModel = newsViewModel
 
             let navigationViewController = UINavigationController(rootViewController: newsView)
             navigationViewController.overrideUserInterfaceStyle = .light
