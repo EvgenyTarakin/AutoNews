@@ -16,9 +16,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if let windowsScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowsScene)
             
-            let controller = ViewController()
-            let navigationViewController = UINavigationController(rootViewController: controller)
-            navigationViewController.navigationBar.isHidden = true
+            let newsView = NewsView()
+            newsView.title = "Новости"
+            let newsViewModel = NewsViewModel()
+            
+            newsView.viewModel = newsViewModel
+            newsViewModel.view = newsView
+
+            let navigationViewController = UINavigationController(rootViewController: newsView)
+            navigationViewController.overrideUserInterfaceStyle = .light
             window.rootViewController = navigationViewController
             
             self.window = window
