@@ -90,4 +90,8 @@ final class NetworkManager {
         }
     }
     
+    private func loadImage() {
+        
+    }
+    
 }

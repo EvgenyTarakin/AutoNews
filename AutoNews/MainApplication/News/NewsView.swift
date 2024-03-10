@@ -12,6 +12,7 @@ import UIKit
 protocol NewsViewModelToViewProtocol: AnyObject {
     func updateNewsWithData()
     func updateImages()
+    func goToFullNew(indexNew: Int)
 }
 
 final class NewsView: UIViewController {
@@ -110,6 +111,10 @@ extension NewsView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath) as? NewsCell
         cell?.animateSelectCell()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            guard let self else { return }
+            viewModel?.didSelectCell(index: indexPath.item)
+        }
     }
 }
 
@@ -127,7 +132,6 @@ extension NewsView: UICollectionViewDataSource {
               let new = viewModel?.getNew(index: indexPath.row)
         else { return UICollectionViewCell() }
         
-//        let new = viewModel?.getNew(index: indexPath.row)
         cell.configurate(title: new.title ?? "")
         
         DispatchQueue.global().async {
@@ -162,5 +166,23 @@ extension NewsView: NewsViewModelToViewProtocol {
             guard let self else { return }
             collectionView.reloadData()
         }
+    }
+    
+    func goToFullNew(indexNew: Int) {
+        let fullNewView = FullNewView()
+        let fullNewViewModel = FullNewViewModel(new: viewModel?.getNew(index: indexNew))
+        fullNewView.viewModel = fullNewViewModel
+        fullNewViewModel.view = fullNewView
+        
+        let animation = CATransition()
+        animation.duration = 0.4
+        animation.timingFunction = CAMediaTimingFunction(name: .default)
+        animation.type = .moveIn
+        animation.subtype = .fromTop
+        
+        navigationController?.navigationBar.isHidden = true
+        navigationController?.view.layer.add(animation, forKey: nil)
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+        navigationController?.pushViewController(fullNewView, animated: false)
     }
 }

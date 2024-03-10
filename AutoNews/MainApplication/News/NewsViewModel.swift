@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UIKit
 
 // MARK: - NewsViewToViewModelProtocol
 
@@ -15,6 +14,7 @@ protocol NewsViewToViewModelProtocol: AnyObject {
     func loadNextPageNews()
     func getCountNews() -> Int
     func getNew(index: Int) -> New?
+    func didSelectCell(index: Int)
 }
 
 final class NewsViewModel {
@@ -73,5 +73,9 @@ extension NewsViewModel: NewsViewToViewModelProtocol {
     
     func getNew(index: Int) -> New? {
         return networkManager.getNew(index: index)
+    }
+    
+    func didSelectCell(index: Int) {
+        view?.goToFullNew(indexNew: index)
     }
 }
